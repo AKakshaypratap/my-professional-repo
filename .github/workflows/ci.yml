@@ -34,7 +34,7 @@ jobs:
       - name: Build artifact
         run: |
           mkdir -p dist
-          cd app/calculator.py dist/
+          cp app/calculator.py dist/
           echo "Build: $(date)" > dist/build_info.txt  
 
       - name: Upload artifact
