@@ -8,20 +8,39 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  ci:
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Print Hello
-        run: echo "Hello Devops!"
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
 
-      - name: Print data and time
-        run: date
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
-      - name: Show repo files
-        run: ls -la
+      - name: Lint with flake8
+        run: flake8 app/calculator.py --max-line-length=88
+
+      - name: Run unit tests
+        run: |
+          cd app
+          python -m unittest test_calculator.py -v
+
+      - name: Build artifact
+        run: |
+          mkdir -p dist
+          cd app/calculator.py dist/
+          echo "Build: $(date)" > dist/build_info.txt  
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: calculator-app
+          path: dist/
 
 
